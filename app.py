@@ -6,7 +6,10 @@ from task import *
 class TaskManagerApp:
     def __init__(self, master):
         self.master = master
+        self.tasks = load_tasks()
         master.title("Task Manager")
+
+        self.load_labels()
 
         self.label = ttk.Label(master, text="Task Manager", style='TLabel')
         self.label.grid(row=0, columnspan=4, pady=(10, 100))
@@ -33,8 +36,34 @@ class TaskManagerApp:
         self.priority_menu = OptionMenu(master, self.priority_var, "Низкий", "Средний", "Высокий")
         self.priority_menu.grid(row=4, column=1, columnspan=3)
 
+        # self.label_project = ttk.Label(master, text="Project:", style='TLabel')
+        # self.label_project.grid(row=5, column=0)
+
+        # self.project_var = StringVar(master)
+        # self.project_var.set("Select Project")
+        # self.project_menu = OptionMenu(master, self.project_var, "Project1", "Project2",
+        #                                "Project3")  # Здесь нужно использовать динамические данные
+        # self.project_menu.grid(row=5, column=1)
+
+
+
         self.btn_add_task = ttk.Button(master, text="Добавить задачу", style='TButton', command=self.add_task)
         self.btn_add_task.grid(row=5, columnspan=4, pady=10)
+
+        self.label_label = ttk.Label(master, text="Label:", style='TLabel')
+        self.label_label.grid(row=6, column=0, pady=(10, 0))
+
+        self.entry_label = ttk.Entry(master)
+        self.entry_label.grid(row=6, column=1, pady=(10, 0))
+
+        self.btn_add_label = ttk.Button(master, text="Добавить метку", style='TButton', command=self.add_label)
+        self.btn_add_label.grid(row=6, column=2, pady=(10, 0))
+
+        self.btn_show_tasks = ttk.Button(master, text="Отобразить по метке", style='TButton',
+                                         command=self.show_category_tasks)
+        self.btn_show_tasks.grid(row=7, column=2, pady=10)
+
+
 
         # self.label_title = Label(master, text="Заголовок:")
         # self.label_title.grid(row=1, column=0)
@@ -60,26 +89,31 @@ class TaskManagerApp:
         # self.btn_add_task.grid(row=5, columnspan=2)
 
         self.task_list = Listbox(master, width=70, height=10)
-        self.task_list.grid(row=6, columnspan=4)
+        self.task_list.grid(row=8, columnspan=4)
 
         self.scrollbar = Scrollbar(master)
-        self.scrollbar.grid(row=6, column=4, sticky="ns")
+        self.scrollbar.grid(row=8, column=4, sticky="ns")
 
         self.task_list.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.task_list.yview)
 
         self.btn_update_task = Button(master, text="Обновить выбранную задачу", command=self.update_selected_task)
-        self.btn_update_task.grid(row=7, columnspan=2)
+        self.btn_update_task.grid(row=9, columnspan=2)
 
         self.btn_delete_task = Button(master, text="Удалить выбранную задачу", command=self.delete_selected_task)
-        self.btn_delete_task.grid(row=8, columnspan=2)
+        self.btn_delete_task.grid(row=10, columnspan=2)
 
         self.btn_export = Button(master, text="Экспортировать задачи", command=self.export_data)
-        self.btn_export.grid(row=9, columnspan=2)
+        self.btn_export.grid(row=11, columnspan=2)
+
+        self.btn_export = Button(master, text="Импортировать задачи", command=self.import_data)
+        self.btn_export.grid(row=12, columnspan=2)
 
         # Загрузка задач и отображение в списке
-        tasks = load_tasks()
-        for task in tasks:
+        tasks_load = load_tasks()
+        tasks_1 = sort_tasks_by_priority(tasks_load)
+        # tasks = categorize_tasks_by_project(tasks_1)
+        for task in tasks_1:
             self.task_list.insert(END,
                                   f"{task['заголовок']} - {task['описание']} - {task['срок_выполнения']} "
                                   f"- {task['приоритет']}")
@@ -124,6 +158,66 @@ class TaskManagerApp:
 
     def export_data(self):
         export_to_txt()
+
+    def import_data(self):
+        import_from_txt()
+
+    def add_label(self):
+        # Функция добавления метки к задаче
+        selected_task_index = self.task_list.curselection()
+        if selected_task_index:
+            label = self.entry_label.get()
+            if label:
+                task = self.tasks[selected_task_index[0]]
+                if 'метки' in task:
+                    task['метки'].append(label)
+                else:
+                    task['метки'] = [label]
+                self.task_list.delete(selected_task_index[0])
+                self.task_list.insert(selected_task_index[0],
+                                      f"{task['заголовок']} - {task['описание']} -"
+                                      f" {task['срок_выполнения']} - {task['приоритет']}"
+                                      f" - Метки: {', '.join(task['метки'])}")
+                self.entry_label.delete(0, 'end')
+
+                self.labels.append(label)  # Добавление новой метки в список меток
+                self.save_labels()  # Сохранение меток
+            else:
+                messagebox.showwarning("Warning", "Введите метку!")
+        else:
+            messagebox.showwarning("Warning", "Выберите задачу для добавления метки!")
+
+
+    def show_category_tasks(self):
+        label = self.entry_label.get()
+        if label:
+            labeled_tasks = [task for task in self.tasks if task.get('метки') and label in task['метки']]
+            self.task_list.delete(0, END)
+            for task in labeled_tasks:
+                self.task_list.insert(END,
+                                      f"{task['заголовок']} - {task['описание']} - "
+                                      f"{task['срок_выполнения']} - {task['приоритет']} "
+                                      f"- Метки: {', '.join(task['метки'])}")
+        else:
+            messagebox.showwarning("Warning", "Выберите метку для отображения задач!")
+
+    def load_labels(self):
+        try:
+            with open('labels.json', 'r') as file:
+                self.labels = json.load(file)
+        except FileNotFoundError:
+            self.labels = []
+
+    def save_labels(self):
+        with open('labels.json', 'w') as file:
+            json.dump(self.labels, file)
+
+    # def show_category_tasks(self):
+        # project = self.project_var.get()
+        # if project == "Select Project":
+        #     messagebox.showwarning("Warning", "")
+        #     return
+
 
 
 

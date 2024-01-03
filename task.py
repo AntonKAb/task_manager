@@ -34,10 +34,10 @@ def add_task(title, description, deadline, priority):
 
 
 # Отображение списка задач
-def show_tasks():
-    tasks = load_tasks()
-    for index, task in enumerate(tasks, 1):
-        print(f"{index}. {task['заголовок']} - {task['описание']} - {task['срок_выполнения']} - {task['приоритет']}")
+# def show_tasks():
+#     tasks = load_tasks()
+#     for index, task in enumerate(tasks, 1):
+#         print(f"{index}. {task['заголовок']} - {task['описание']} - {task['срок_выполнения']} - {task['приоритет']}")
 
 
 # Обновление задачи
@@ -69,31 +69,31 @@ def delete_task(index):
 
 
 # Добавим задачу в указанную категорию
-def add_task_to_category(category, task_index):
-    categories = load_categories()
-    if category in categories:
-        categories[category].append(task_index)
-    else:
-        categories[category] = [task_index]
-    save_categories(categories)
+# def add_task_to_category(category, task_index):
+#     categories = load_categories()
+#     if category in categories:
+#         categories[category].append(task_index)
+#     else:
+#         categories[category] = [task_index]
+#     save_categories(categories)
 
 
 # Загрузка категорий из файла
-def load_categories():
-    try:
-        with open('categories.json', 'r') as file:
-            categories = json.load(file)
-    except FileNotFoundError:
-        categories = {}
-    return categories
+# def load_categories():
+#     try:
+#         with open('categories.json', 'r') as file:
+#             categories = json.load(file)
+#     except FileNotFoundError:
+#         categories = {}
+#     return categories
 
 
 # Сортировка задач по приоритету
-def sort_tasks_by_priority():
-    tasks = load_tasks()
+def sort_tasks_by_priority(tasks):
     sorted_tasks = sorted(tasks, key=lambda x: x['приоритет'], reverse=True)
-    for task in sorted_tasks:
-        print(f"{task['заголовок']} - {task['приоритет']}")
+    # for task in sorted_tasks:
+    #     print(f"{task['заголовок']} - {task['приоритет']}")
+    return sorted_tasks
 
 
 # Сохранение категорий в файл
@@ -109,15 +109,15 @@ def export_tasks(filename):
         shelf['tasks'] = tasks
 
 
-# Импорт данных
+# Импорт и экспорт данных
 def export_to_txt():
     tasks = load_tasks()
     with open('tasks.txt', 'w') as file:
         for task in tasks:
             file.write(f"{task['заголовок']} - {task['описание']} - {task['срок_выполнения']} - {task['приоритет']}\n")
+    print('done')
 
 
-# Экспорт данных
 def import_from_txt():
     with open('tasks.txt', 'r') as file:
         tasks = []
