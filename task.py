@@ -41,7 +41,7 @@ def add_task(title, description, deadline, priority):
 
 
 # Обновление задачи
-def update_task(index, title, description, deadline, priority): # переписать
+def update_task(index, title, description, deadline, priority):
     tasks = load_tasks()
     if 1 <= index <= len(tasks):
         tasks[index - 1] = {
@@ -131,6 +131,21 @@ def import_from_txt():
             }
             tasks.append(task)
         save_tasks(tasks)
+
+
+# def save_labels(title, description, deadline, priority):
+#     tasks = load_tasks()
+#     task = {
+#         "заголовок": title,
+#         "описание": description,
+#         "срок_выполнения": deadline,
+#         "приоритет": priority
+#
+#     }
+#     tasks.append(task)
+#     save_tasks(tasks)
+#     print("Новая задача добавлена!")
+
 
 
 
