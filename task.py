@@ -1,6 +1,9 @@
 import json
+import smtplib
 from datetime import datetime
 import shelve
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 # Загрузка данных из файла
@@ -150,6 +153,7 @@ def import_from_txt():
         save_tasks(tasks)
 
 
+# Добавление метки
 def save_label(index, point):
     tasks = load_tasks()
     print(index)
@@ -165,6 +169,36 @@ def save_label(index, point):
         print("Ошибка: Метка не сохранена")
 
 
+def send_notification():
+    pass
+
+
+def send_email_notification(to_email, subject, message):
+    from_email = ""
+    password = ""
+
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(message, 'plain'))
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)  # SMTP-сервер Gmail
+    server.starttls()  # Шифрование передачи
+    server.login(from_email, password)  # Аутентификация
+
+    server.send_message(msg)  # Отправка письма
+    server.quit()  # Завершение сеанса
+
+
+def check_tasks_due(tasks, days_before_due=1):
+    for task in tasks:
+        deadline_date = datetime.datetime.strptime(task['срок_выполнения'], '%Y-%m-%d')
+        current_date = datetime.datetime.now()
+        if (deadline_date - current_date).days <= days_before_due and (deadline_date - current_date).days >= 0:
+            send_email_notification(
+                f"Срок сдачи приближается {task['заголовок']}",
+                f"Срок выполнения задачи: '{task['заголовок']}' выйдет {task['срок_выполнения']}.")
 
 # Примеры использования функций
 # add_task("Сходить в спортзал", "Посетить тренировку по бегу", "2023-12-30", "средний")

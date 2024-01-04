@@ -14,7 +14,7 @@ class TaskManagerApp:
         # self.load_tasks()
 
         self.label = ttk.Label(master, text="Task Manager", style='TLabel')
-        self.label.grid(row=0, columnspan=4, pady=(10, 100))
+        self.label.grid(row=0, columnspan=4, pady=(10, 10))
 
         self.label_title = ttk.Label(master, text="Заголовок:", style='TLabel')
         self.label_title.grid(row=1, column=0, padx=10)
@@ -119,6 +119,23 @@ class TaskManagerApp:
         #     self.listbox_label.insert(END, f"{label}")
         # self.listbox_label.bind("<<ListboxSelect>>", self.on_select_label)
 
+        self.label_task_reminder = ttk.Label(master, text="Select Task for Reminder:", style='TLabel')
+        self.label_task_reminder.grid(row=14, column=0, padx=10, pady=(10, 0))
+
+        self.combobox_task = ttk.Combobox(master, values=[task['заголовок'] for task in self.tasks])
+        self.combobox_task.grid(row=14, column=1, padx=10, pady=(10, 0))
+
+        self.label_reminder_date = ttk.Label(master, text="Дата напоминания:", style='TLabel')
+        self.label_reminder_date.grid(row=15, column=0, padx=10, pady=(10, 0))
+
+        self.reminder_date_var = StringVar()
+        self.reminder_date_entry = ttk.Entry(master, textvariable=self.reminder_date_var)
+        self.reminder_date_entry.grid(row=16, column=1, padx=10, pady=(10, 0))
+
+        self.btn_set_reminder = ttk.Button(master, text="Установить напоминнаие", style='TButton',
+                                           command=self.set_reminder)
+        self.btn_set_reminder.grid(row=17, columnspan=2, pady=10)
+
         # Загрузка задач и отображение в списке
         tasks_load = load_tasks()
         tasks_1 = sort_tasks_by_priority(tasks_load)
@@ -186,6 +203,20 @@ class TaskManagerApp:
     def import_data(self):
         import_from_txt()
 
+    def set_reminder(self):
+        selected_task_index = self.combobox_task.current()
+        reminder_date = self.reminder_date_var.get()
+        if selected_task_index != -1 and reminder_date:
+            selected_task = self.tasks[selected_task_index]
+            reminder_data = {'task_title': selected_task['заголовок'], 'reminder_date': reminder_date}
+            self.save_reminder_data(reminder_data)
+            messagebox.showinfo(f"Напоминание для задачи'{selected_task['заголовок']}' на {reminder_date}.")
+        else:
+            messagebox.showwarning("Warning", "Выберите задачу для установки напоминания.")
+
+    def save_reminder_data(self, reminder_data):
+        with open('reminders.json', 'w') as file:
+            json.dump(reminder_data, file)
 
     # def add_label(self):
     #     # Функция добавления метки к задаче
