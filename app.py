@@ -136,9 +136,9 @@ class TaskManagerApp:
                                       f"- {task['приоритет']}")
 
     def save_labels(self, label, index):
-        print('идекс: ', index)
+        print('индекс: ', index)
         if index:
-            save_label(index[0] + 1, label)
+            save_label(index[0], label)
             # self.task_list.delete(selected_index[0])
 
     def add_task(self):
@@ -291,9 +291,9 @@ class TaskManagerApp:
                 self.task_list.insert(END,
                                       f"{task['заголовок']} - {task['описание']} - "
                                       f"{task['срок_выполнения']} - {task['приоритет']} "
-                                      f"- Метки: {', '.join(task['Метки:'])}")
+                                      f"- Метки: {''.join(task['Метки:'])}")
         else:
-            messagebox.showwarning("Warning", "Выберите метку для отображения задач!")
+            messagebox.showwarning("Warning", "Введите метку для отображения задач!")
 
     def show_tasks(self):
         tasks_load = load_tasks()

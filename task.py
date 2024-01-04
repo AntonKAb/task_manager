@@ -122,9 +122,16 @@ def export_tasks(filename):
 # Импорт и экспорт данных
 def export_to_txt():
     tasks = load_tasks()
+    label = 'Метки:'
     with open('tasks.txt', 'w') as file:
         for task in tasks:
-            file.write(f"{task['заголовок']} - {task['описание']} - {task['срок_выполнения']} - {task['приоритет']}\n")
+            print(task)
+            if label in list(task.keys()):
+                file.write(f"{task['заголовок']} - {task['описание']} - "
+                           f"{task['срок_выполнения']} - {task['приоритет']} - Метки: {task['Метки:']}\n")
+            else:
+                file.write(f"{task['заголовок']} - {task['описание']} - "
+                           f"{task['срок_выполнения']} - {task['приоритет']}\n")
     print('done')
 
 
@@ -145,16 +152,18 @@ def import_from_txt():
 
 def save_label(index, point):
     tasks = load_tasks()
+    print(index)
     # print(tasks)
-    if 1 <= index <= len(tasks):
-        print(tasks)
-        print(tasks[index])
+    if 0 <= index <= len(tasks):
+        # print(tasks)
+        # print(tasks[index])
         tasks[index]['Метки:'] = point
         save_tasks(tasks)
-        print(load_tasks())
+        # print(load_tasks())
         print("Метка добавлена!")
     else:
         print("Ошибка: Метка не сохранена")
+
 
 
 # Примеры использования функций
