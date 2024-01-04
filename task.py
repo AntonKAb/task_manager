@@ -10,7 +10,17 @@ def load_tasks():
             tasks = json.load(file)
     except FileNotFoundError:
         tasks = []
+    # print(tasks)
     return tasks
+
+
+# def load_labels():
+#     try:
+#         with open('labels.json', 'r') as file:
+#             labels = json.load(file)
+#     except FileNotFoundError:
+#         labels = []
+#     return labels
 
 
 # Сохранение данных в файл
@@ -133,20 +143,18 @@ def import_from_txt():
         save_tasks(tasks)
 
 
-# def save_labels(title, description, deadline, priority):
-#     tasks = load_tasks()
-#     task = {
-#         "заголовок": title,
-#         "описание": description,
-#         "срок_выполнения": deadline,
-#         "приоритет": priority
-#
-#     }
-#     tasks.append(task)
-#     save_tasks(tasks)
-#     print("Новая задача добавлена!")
-
-
+def save_label(index, point):
+    tasks = load_tasks()
+    # print(tasks)
+    if 1 <= index <= len(tasks):
+        print(tasks)
+        print(tasks[index])
+        tasks[index]['Метки:'] = point
+        save_tasks(tasks)
+        print(load_tasks())
+        print("Метка добавлена!")
+    else:
+        print("Ошибка: Метка не сохранена")
 
 
 # Примеры использования функций
