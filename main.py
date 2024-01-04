@@ -12,3 +12,4 @@ if __name__ == '__main__':
     print('hellow')
     # Запуск графического интерфейса
     start_prog()
+
