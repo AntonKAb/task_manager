@@ -49,7 +49,6 @@ def update_task(index, title, description, deadline, priority):
         print("Ошибка: Неверный номер задачи")
 
 
-
 # Удаление задачи
 def delete_task(index):
     tasks = load_tasks()
@@ -86,7 +85,7 @@ def export_to_txt():
     label = 'Метки:'
     with open('tasks.txt', 'w') as file:
         for task in tasks:
-            print(task)
+            # print(task)
             if label in list(task.keys()):
                 file.write(f"{task['заголовок']} - {task['описание']} - "
                            f"{task['срок_выполнения']} - {task['приоритет']} - Метки: {task['Метки:']}\n")

@@ -1,5 +1,4 @@
-from tkinter import Label, Button, Entry, Scrollbar, Listbox, END, ttk, StringVar, OptionMenu
-from tkinter import messagebox
+from tkinter import Label, Button, Entry, Scrollbar, Listbox, END, ttk, StringVar, OptionMenu, messagebox
 from task import *
 
 
@@ -37,7 +36,7 @@ class TaskManagerApp:
         self.btn_add_task = ttk.Button(master, text="Добавить задачу", style='TButton', command=self.add_task)
         self.btn_add_task.grid(row=5, columnspan=4, pady=10)
 
-        self.label_label = ttk.Label(master, text="Label:", style='TLabel')
+        self.label_label = ttk.Label(master, text="Метка:", style='TLabel')
         self.label_label.grid(row=6, column=0, pady=(10, 0))
 
         self.entry_label = ttk.Entry(master)
@@ -140,7 +139,12 @@ class TaskManagerApp:
         export_to_txt()
 
     def import_data(self):
-        import_from_txt()
+        try:
+            import_from_txt()
+        except FileNotFoundError:
+            messagebox.showwarning("Warning", "Не создан файл.")
+            return
+
 
 
     def add_label(self):
